@@ -1,39 +1,41 @@
 package main
 
 import (
-"fmt"
+	"fmt"
+
+	log "github.com/vigo5190/goimports-example/b"
 )
 
-type person struct{
-	name string
+type person struct {
+	name    string
 	surname string
-	age int
+	age     int
 }
 
-type employee struct{
+type employee struct {
 	salary float32
 	person
 }
 
-type teacher struct{
+type teacher struct {
 	specialization string
-	formMaster bool
+	formMaster     bool
 	employee
 }
 
-type driver struct{
-	category string
+type driver struct {
+	category   string
 	experience uint8
 	employee
 }
 
-type hairdresser struct{
+type hairdresser struct {
 	certificate bool
 	employee
 }
 
 type psychologist struct {
-	license bool
+	license        bool
 	academicDegree string
 	employee
 }
@@ -43,31 +45,31 @@ type electrician struct {
 }
 type lawyer struct {
 	direction string
-	license bool
+	license   bool
 	employee
 }
 
 func main() {
 	var testTeacher = teacher{
 		specialization: "math",
-		formMaster: false,
+		formMaster:     false,
 		employee: employee{
 			salary: 9200.1,
 			person: person{
-				name: "testTeacherName",
+				name:    "testTeacherName",
 				surname: "testTeacherSurname",
-				age: 23,
+				age:     23,
 			},
 		},
 	}
 	var testDriver = driver{
-		category: "B",
+		category:   "B",
 		experience: 5,
 		employee: employee{
 			salary: 9000.9,
 			person: person{
 				name: "testDriverName",
-				age: 30,
+				age:  30,
 			},
 		},
 	}
@@ -85,8 +87,8 @@ func main() {
 		employee: employee{
 			salary: 11000.1,
 			person: person{
-				age: 33,
-				name: "testPsyhName",
+				age:     33,
+				name:    "testPsyhName",
 				surname: "testPsyhSurname",
 			},
 		},
@@ -105,16 +107,18 @@ func main() {
 		employee: employee{
 			salary: 33000.9,
 			person: person{
-				age: 26,
+				age:  26,
 				name: "testLawyerName",
 			},
 		},
 	}
 
-	fmt.Println("teacher name: ",testTeacher.name)
-	fmt.Println("Driver Age: ",testDriver.age)
-	fmt.Println("electrician salary: ",testElectrician.salary)
-	fmt.Println("hairdress certificate: ",testHairdress.certificate)
-	fmt.Println("Psyhologist surname: ",testPsyhologist.surname)
-	fmt.Println("lawyer direction ",testLawyer.direction)
+	fmt.Println("teacher name: ", testTeacher.name)
+	fmt.Println("Driver Age: ", testDriver.age)
+	fmt.Println("electrician salary: ", testElectrician.salary)
+	fmt.Println("hairdress certificate: ", testHairdress.certificate)
+	fmt.Println("Psyhologist surname: ", testPsyhologist.surname)
+	fmt.Println("lawyer direction ", testLawyer.direction)
+
+	fmt.Println("result of import package", log.Foo)
 }
