@@ -16,6 +16,7 @@ type person struct {
 }
 type employee struct {
 	Salary float32 `json:"salary"`
+	Post   string  `json:"post"`
 	person *person
 }
 type teacher struct {
@@ -45,6 +46,9 @@ type lawyer struct {
 	Direction string `json:"direction"`
 	License   bool   `json:"license"`
 	employee  *employee
+}
+type uId struct {
+	id uint8 `json:"id"`
 }
 
 func (receiver *person) GetName() string {
@@ -76,6 +80,10 @@ func (receiver *person) GetWeight() uint8 {
 	fmt.Println("\nPerson weight: ")
 	return receiver.Weight
 }
+func (receiver *employee) GetPost() string {
+	fmt.Println("Person post: ")
+	return receiver.Post
+}
 
 func main() {
 	var testTeacher *teacher = &teacher{
@@ -83,6 +91,7 @@ func main() {
 		FormMaster:     false,
 		employee: &employee{
 			Salary: 9200.1,
+			Post:   "Headmaster",
 			person: &person{
 				Name:        "testTeacherName",
 				Surname:     "testTeacherSurname",
@@ -99,6 +108,7 @@ func main() {
 		Experience: 5,
 		employee: &employee{
 			Salary: 9000.9,
+			Post:   "Trucker",
 			person: &person{
 				Name:        "testDriverName",
 				Surname:     "testDriverSurame",
@@ -114,6 +124,7 @@ func main() {
 		Certificate: true,
 		employee: &employee{
 			Salary: 14232.1,
+			Post:   "Hairdresser",
 			person: &person{
 				Name:        "testHairdressName",
 				Surname:     "testHairdressSurname",
@@ -129,6 +140,7 @@ func main() {
 		License: true,
 		employee: &employee{
 			Salary: 11000.1,
+			Post:   "Head doctor",
 			person: &person{
 				Name:        "testPsyhologistName",
 				Surname:     "testPsyhologistSurname",
@@ -144,6 +156,7 @@ func main() {
 		Category: 4,
 		employee: &employee{
 			Salary: 11000.35,
+			Post:   "Senior electrician",
 			person: &person{
 				Name:        "testNameElectrician",
 				Surname:     "testSurnameameElectrician",
@@ -159,6 +172,7 @@ func main() {
 		Direction: "Criminal Law",
 		employee: &employee{
 			Salary: 33000.9,
+			Post:   "Judge",
 			person: &person{
 				Name:        "testLawyerName",
 				Surname:     "testLawyerSurname",
@@ -171,14 +185,20 @@ func main() {
 		},
 	}
 
-	fmt.Println("Start")
+	//MapOfTeachers:= map[uId] teacher{{0}: *testTeacher}
+	Map := map[uId]*employee{{0}: testTeacher.employee, {1}: testDriver.employee, {2}: testHairdress.employee,
+		{3}: testPsyhologist.employee, {4}: testElectrician.employee, {5}: testLawyer.employee}
 
-	fmt.Println("teacher name: ", (*testTeacher).employee.person.Name)
-	fmt.Println("Driver Age: ", (*testDriver).employee.person.Age)
-	fmt.Println("electrician salary: ", (*testElectrician).employee.Salary)
-	fmt.Println("hairdress certificate: ", (*testHairdress).Certificate)
-	fmt.Println("Psyhologist surname: ", (*testPsyhologist).employee.person.Surname)
-	fmt.Println("lawyer direction: ", (*testLawyer).Direction)
+	/*
+		fmt.Println("Start")
+
+		fmt.Println("teacher name: ", (*testTeacher).employee.person.Name)
+		fmt.Println("Driver Age: ", (*testDriver).employee.person.Age)
+		fmt.Println("electrician salary: ", (*testElectrician).employee.Salary)
+		fmt.Println("hairdress certificate: ", (*testHairdress).Certificate)
+		fmt.Println("Psyhologist surname: ", (*testPsyhologist).employee.person.Surname)
+		fmt.Println("lawyer direction: ", (*testLawyer).Direction)
+	*/
 
 	fmt.Println("result of import package: ", log.Foo)
 
@@ -191,11 +211,27 @@ func main() {
 	fmt.Println((*person).GetHeight((*testHairdress).employee.person))
 	fmt.Println((*person).GetWeight((*testHairdress).employee.person))
 
-	/*panic*/
-	if (*person).GetAge((*testLawyer).employee.person) == 26 {
+	fmt.Println("Start 3")
+	//fmt.Println(MapOfTeachers)
+	fmt.Println(Map)
+	Poll(Map)
+
+	/*panic
+	if (*person).GetAge((*testLawyer).employee.person) != 26 {
 		f_panic()
 	}
+	*/
+
 }
+func Poll(Map map[uId]*employee) {
+	for _, v := range Map {
+		fmt.Println(v.person.GetName())
+		fmt.Println(v.GetPost())
+	}
+}
+
+/*
 func f_panic() {
 	panic("It`s panic!")
 }
+*/
