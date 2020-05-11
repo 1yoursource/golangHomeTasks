@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	log "github.com/vigo5190/goimports-example/b"
+	"math/rand"
+	"time"
 )
 
 type person struct {
@@ -47,9 +49,7 @@ type lawyer struct {
 	License   bool   `json:"license"`
 	employee  *employee
 }
-type uId struct {
-	id uint8 `json:"id"`
-}
+type uId uint8
 
 func (receiver *person) GetName() string {
 	fmt.Println("\nPerson name: ")
@@ -185,10 +185,12 @@ func main() {
 		},
 	}
 
-	//MapOfTeachers:= map[uId] teacher{{0}: *testTeacher}
-	Map := map[uId]*employee{{0}: testTeacher.employee, {1}: testDriver.employee, {2}: testHairdress.employee,
-		{3}: testPsyhologist.employee, {4}: testElectrician.employee, {5}: testLawyer.employee}
-
+	/*
+		_map := map[uId]*employee{0: testTeacher.employee, 1: testDriver.employee, 2: testHairdress.employee,
+			3: testPsyhologist.employee, 4: testElectrician.employee, 5: testLawyer.employee}
+	*/
+	_map := map[uId]interface{}{0: testTeacher.employee, 1: testDriver.employee, 2: testHairdress.employee,
+		3: testPsyhologist.employee, 4: testElectrician.employee, 5: testLawyer.employee}
 	/*
 		fmt.Println("Start")
 
@@ -213,23 +215,133 @@ func main() {
 
 	fmt.Println("Start 3")
 	//fmt.Println(MapOfTeachers)
-	fmt.Println(Map)
-	Poll(Map)
-
+	//fmt.Println(_map)
+	//Poll(_map)
+	//fmt.Println(map1)
+	Poll(_map)
 	/*panic
 	if (*person).GetAge((*testLawyer).employee.person) != 26 {
 		f_panic()
 	}
 	*/
+	fmt.Println("Start 4")
+	GetType(testDriver)
+	GetType(testElectrician)
+	fmt.Println("Start 5")
+	go randomNumber(10, 20)
+	randomNumber(1, 10)
 
+	fmt.Println("Start 6")
+	DNA_HammingDistance("GAGCCTACTAACGGGAT", "CATCGTAATGACGGCCT")
+
+	//fmt.Println("Start 7")
+	//luhnAlgorithm("9875132414827548")
 }
-func Poll(Map map[uId]*employee) {
-	for _, v := range Map {
+
+/*
+func Poll(_map map[uId]*employee) {
+	for _, v := range _map {
 		fmt.Println(v.person.GetName())
 		fmt.Println(v.GetPost())
 	}
 }
+*/
+func Poll(_map map[uId]interface{}) {
+	for _, v := range _map {
+		fmt.Println(v.(*employee).person.GetName())
+		fmt.Println(v.(*employee).GetPost())
+	}
+}
+func GetType(temp interface{}) {
+	switch v := temp.(type) {
+	case int:
+		fmt.Printf("Your type is: %T\n", v)
+	case string:
+		fmt.Printf("Your type is: %T\n", v)
+	case float64:
+		fmt.Printf("Your type is: %T\n", v)
+	case *teacher:
+		fmt.Printf("Your type is: %T\n", v)
+	case *driver:
+		fmt.Printf("Your type is: %T\n", v)
+	case *hairdresser:
+		fmt.Printf("Your type is: %T\n", v)
+	case *psychologist:
+		fmt.Printf("Your type is: %T\n", v)
+	case *electrician:
+		fmt.Printf("Your type is: %T\n", v)
+	case *lawyer:
+		fmt.Printf("Your type is: %T\n", v)
+	default:
+		fmt.Printf("I don't know about type %T!\n", v)
+	}
+}
+func randomNumber(min, max int) {
+	for i := 0; i < 5; i++ {
+		time.Sleep(400 * time.Millisecond)
+		if min > 9 {
+			fmt.Println("IT`S GOrutine i =", i, "->", rand.Intn(max-min)+min)
+		} else {
+			fmt.Println("i =", i, "->", rand.Intn(max-min)+min)
+		}
+	}
+}
+func DNA_HammingDistance(str1, str2 string) {
+	var count int
+	for i := 0; i < len(str1); i++ {
+		if str1[i] != str2[i] {
+			count++
+		}
+	}
+	fmt.Println("Hamming distance = ", count)
+}
 
+/*
+func luhnAlgorithm(pPurported string){
+	sum:=0
+	num, _ := strconv.ParseFloat(pPurported,64)
+	var digitCount int = int(math.Log10(num)+1)
+	var array []int =[] int{digitCount}
+	for i:=0;i<digitCount;i++{
+		array[i]=int(num) % 10
+		num/=10
+	}
+	var p int
+	if digitCount%2==0{
+		for i:=0;i<digitCount-1;i++{
+			if i%2==0{
+				p=array[i]*2
+				if p>9{
+					p-=9
+				}
+				array[i]=p
+			} else {
+				array[i]=array[i]
+			}
+			sum+=array[i]
+		}
+		if sum%10==0{
+			fmt.Println("Number is valid")
+		} else {
+			fmt.Println("Number is not valid")
+		}
+	}
+}
+/*
+func luhnAlgorithm(pPurported string)bool{
+	var sum int
+	for i:=0;i<len(pPurported)-1;i++{
+		 digit := int(pPurported[i])
+		 if i%2==len(pPurported)%2{
+		 	digit:=digit*2
+		 	if digit>9{
+		 		digit:=digit-9
+			}
+		 }
+		 sum:=sum+digit
+	}
+	return sum%10==0
+}
 /*
 func f_panic() {
 	panic("It`s panic!")
