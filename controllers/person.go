@@ -1,5 +1,151 @@
 package controllers
 
+import (
+	"awesomeProject/forms"
+	"awesomeProject/models"
+	"github.com/gin-gonic/gin"
+	"gopkg.in/mgo.v2/bson"
+	"net/http"
+	"regexp"
+	"strconv"
+)
+
+var personModel = new(models.PersonModel)
+
+type PersonCotroller struct{}
+
+//Add template
+func (p *PersonCotroller) GetAllPersons(c *gin.Context) {
+	persons, err := personModel.GetAllPersons()
+	if err != nil {
+		c.JSON(400, gin.H{"message": err.Error()})
+		return
+	}
+	c.HTML(http.StatusOK, "PAGE", persons)
+}
+func (p *PersonCotroller) AddNewPerson(c *gin.Context) {
+	var data forms.AddPersonCommand
+
+	data.Name = c.PostForm("name")
+	data.Surname = c.PostForm("surname")
+	data.Sex = c.PostForm("sex")
+	age, _ := strconv.ParseInt(c.PostForm("age"), 10, 32)
+	data.Age = uint8(age)
+
+	if CheckFieldNoEmpty(data.Name, data.Surname, data.Sex, strconv.FormatInt(age, 10)) {
+		c.JSON(401, gin.H{"message": "Provide relevant fields!"})
+		//fmt.Println(401,"Provide relevant fields")
+		return
+	}
+
+	boolTemp, index := CheckHasNoDigits(data.Name, data.Surname, data.Sex)
+	if boolTemp {
+		c.JSON(402, gin.H{"message": "Field" + strconv.Itoa(index) + "can`t contain any digits!"})
+		//fmt.Println(406,"Field",index,"can`t contain any digits!")
+		return
+	}
+
+	if CheckAgeHasNoAlphabetic(age) {
+		c.JSON(402, gin.H{"message": "Age can`t contain any alphabetic symbols!"})
+		//fmt.Println(406,"Age can`t contain any alphabetic symbols!")
+		return
+	}
+
+	result, _ := personModel.GetPersonByName(data.Name, data.Surname)
+	if result.Name != "" {
+		c.JSON(405, gin.H{"message": "This person is already exist!"})
+		return
+	}
+
+	err := personModel.AddPerson(data)
+	if err != nil {
+		c.JSON(406, gin.H{"message": "Problem adding a person! Try again later"})
+		return
+	}
+}
+func (p *PersonCotroller) ChangePersonInfo(c *gin.Context) {
+	var data models.Person
+
+	data.Id = bson.ObjectIdHex(c.Param("id"))
+	data.Name = c.PostForm("name")
+	data.Surname = c.PostForm("surname")
+	data.Sex = c.PostForm("sex")
+	age, _ := strconv.ParseInt(c.PostForm("age"), 10, 32)
+	data.Age = uint8(age)
+
+	if CheckFieldNoEmpty(data.Name, data.Surname, data.Sex, strconv.FormatInt(age, 10)) {
+		c.JSON(401, gin.H{"message": "Provide relevant fields!"})
+		//fmt.Println(401,"Provide relevant fields")
+		return
+	}
+
+	boolTemp, index := CheckHasNoDigits(data.Name, data.Surname, data.Sex)
+	if boolTemp {
+		c.JSON(402, gin.H{"message": "Field" + strconv.Itoa(index) + "can`t contain any digits!"})
+		//fmt.Println(406,"Field",index,"can`t contain any digits!")
+		return
+	}
+
+	if CheckAgeHasNoAlphabetic(age) {
+		c.JSON(402, gin.H{"message": "Age can`t contain any alphabetic symbols!"})
+		//fmt.Println(406,"Age can`t contain any alphabetic symbols!")
+		return
+	}
+
+	result, _ := personModel.GetPersonByName(data.Name, data.Surname)
+	//result,_:= personModel.GetPersonByID(data.Id)
+	if result.Name != "" {
+		c.JSON(405, gin.H{"message": "This person is already exist!"})
+		return
+	}
+
+	err := personModel.ChangePersonInfo(data)
+	if err != nil {
+		c.JSON(407, gin.H{"message": "Problem saving data! Try again later"})
+		return
+	}
+}
+func (p *PersonCotroller) DeletePerson(c *gin.Context) {
+	id := bson.ObjectIdHex(c.Param("id"))
+
+	err := personModel.DeletePerson(id)
+	if err != nil {
+		c.JSON(408, gin.H{"message": "Problem with deleting!"})
+		return
+	}
+	c.Status(http.StatusOK)
+}
+
+func CheckFieldNoEmpty(fields ...string) bool {
+	var boolTemp bool
+	for _, v := range fields {
+		if v == "" {
+			boolTemp = false
+		} else {
+			boolTemp = true
+		}
+	}
+	return boolTemp
+}
+func CheckHasNoDigits(fields ...string) (matched bool, index int) {
+	pattern := "[[:digit:]]"
+	//pattern := "[\d]"
+	for k, v := range fields {
+		matched, _ := regexp.MatchString(pattern, v)
+		if matched {
+			index = k
+			return matched, index
+		}
+	}
+	return matched, index
+}
+func CheckAgeHasNoAlphabetic(age int64) bool {
+	pattern := "[[:alpha:]]"
+	//pattern := "[\D]" // or [\^d]
+	matched, _ := regexp.MatchString(pattern, strconv.FormatInt(age, 10))
+	return matched
+}
+
 /*
 package main
 
